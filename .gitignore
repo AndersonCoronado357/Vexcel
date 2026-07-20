@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Builds & caches
+dist/
+frontend/dist/
+frontend/.angular/
+backend/dist/
+.output/
+
+# Environment & secrets
+.env
+*.env
+!*.env.example
+
+# Editor / tooling
+.claude/
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Docker (deploy local acmsy, fuera del repo)
+Dockerfile
+.dockerignore
