@@ -1,0 +1,376 @@
+/* Vexcel — estilos globales (tokens del diseño de Claude Design) */
+
+:root {
+  color-scheme: light;
+
+  /* Neutros — n-50 algo más gris para separar tarjetas blancas sin bordes */
+  --n-50: #F0F0F4;
+  --n-100: #E7E7EE;
+  --n-200: #D9D9E3;
+  --n-300: #B9B9C7;
+  --n-400: #8E8EA0;
+  --n-500: #6B6B7B;
+  --n-600: #4C4C59;
+  --n-700: #37373F;
+  --n-800: #232329;
+  --n-900: #141418;
+  --n-950: #0A0A0C;
+
+  /* Acento */
+  --a-400: #8B7BFF;
+  --a-500: #6D4AFF;
+  --a-600: #5A38E0;
+  --a-700: #4728B4;
+  --a-soft: #F1EEFF;
+
+  /* Semánticos (superficie / bordes) — cambian en modo oscuro */
+  --bg: #F0F0F4;
+  --surface: #FFFFFF;
+  --surface-2: #F0F0F4;
+  --border: #E7E7EE;
+  --border-strong: #D9D9E3;
+  --checker-a: #FFFFFF;
+  --checker-b: #E7E7EE;
+
+  --font-sans: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', Consolas, monospace;
+
+  /* Curvas de animación (fuertes, no las débiles de CSS) */
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Modo oscuro premium: negro profundo (no gris plano), tarjetas que se elevan
+   por tono, texto off-white y acento integrado (no neón sobre gris). */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --n-50: #1C1C24;
+  --n-100: #26262F;
+  --n-200: #33333E;
+  --n-300: #45454F;
+  --n-400: #82828F;
+  --n-500: #9696A3;
+  --n-600: #B0B0BC;
+  --n-700: #CACAD4;
+  --n-800: #E2E2E8;
+  --n-900: #EFEFF3;
+  --n-950: #FFFFFF;
+
+  --a-400: #9D8DFF;
+  --a-500: #7C5CFF;
+  --a-600: #9784FF;
+  --a-soft: #211A3A;
+
+  --bg: #0B0B0F;
+  --surface: #16161C;
+  --surface-2: #1C1C24;
+  --border: #24242C;
+  --border-strong: #33333E;
+  --checker-a: #22222B;
+  --checker-b: #16161C;
+}
+
+/* Selección de texto personalizada */
+::selection {
+  background: var(--a-500);
+  color: #fff;
+}
+::selection img {
+  background: transparent;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--n-800);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  transition: background 200ms ease, color 200ms ease;
+}
+
+a {
+  color: var(--a-500);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--a-600);
+}
+
+/* Scroll funcional con scrollbar oculta */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+*::-webkit-scrollbar {
+  display: none;
+}
+
+h1, h2, h3, h4, p {
+  margin: 0;
+}
+
+button {
+  border: none;
+  font-family: inherit;
+  background: none;
+  padding: 0;
+  color: inherit;
+}
+input,
+textarea {
+  border: none;
+  font-family: inherit;
+}
+input:focus,
+button:focus,
+textarea:focus {
+  outline: none;
+}
+input::placeholder {
+  color: var(--n-300);
+}
+
+/* Sliders (range) del diseño */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 4px;
+  background: var(--n-100);
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 5px var(--a-500), inset 0 0 0 7px var(--surface);
+  border: 1px solid var(--border-strong);
+  cursor: pointer;
+}
+input[type='range']::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 5px var(--a-500);
+  border: 1px solid var(--border-strong);
+  cursor: pointer;
+}
+
+/* Fondo cuadriculado (transparencia) */
+.checker {
+  background-color: var(--checker-a);
+  background-image:
+    linear-gradient(45deg, var(--checker-b) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--checker-b) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--checker-b) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--checker-b) 75%);
+  background-size: 22px 22px;
+  background-position: 0 0, 0 11px, 11px -11px, -11px 0;
+}
+
+/* Botones base del diseño. El scale(0.97) al presionar confirma el toque. */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 11px 18px;
+  background: var(--a-500);
+  color: #fff;
+  border-radius: 11px;
+  font: 600 13.5px var(--font-sans);
+  cursor: pointer;
+  transition: background 150ms ease, transform 160ms var(--ease-out-strong);
+  white-space: nowrap;
+}
+.btn-primary,
+.btn-primary:hover {
+  /* Anula la regla global a:hover cuando el botón es un <a> */
+  color: #fff;
+}
+.btn-primary:hover {
+  background: var(--a-600);
+}
+.btn-primary:active {
+  transform: scale(0.97);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 15px;
+  background: var(--n-50);
+  color: var(--n-700);
+  border-radius: 11px;
+  font: 600 13px var(--font-sans);
+  cursor: pointer;
+  transition: background 150ms ease, transform 160ms var(--ease-out-strong);
+  white-space: nowrap;
+}
+.btn-ghost {
+  color: var(--n-700);
+}
+.btn-ghost:hover {
+  background: var(--a-soft);
+  color: var(--a-600);
+}
+.btn-ghost:active {
+  transform: scale(0.97);
+}
+
+/* Segmentados */
+.seg-track {
+  display: flex;
+  gap: 4px;
+  background: var(--n-50);
+  border-radius: 13px;
+  padding: 4px;
+}
+.seg-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 14px;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--n-500);
+  font: 600 13px var(--font-sans);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease, transform 160ms var(--ease-out-strong);
+  white-space: nowrap;
+}
+.seg-btn:active {
+  transform: scale(0.97);
+}
+.seg-btn.active {
+  background: var(--a-500);
+  color: #fff;
+}
+
+/* Animaciones del diseño */
+@keyframes vx-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes vx-draw {
+  0% { stroke-dashoffset: 560; }
+  55% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -560; }
+}
+@keyframes vx-fade {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes vx-pop {
+  0% { opacity: 0; transform: scale(0.97); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes vx-popup {
+  0% { opacity: 0; transform: translateY(6px) scale(0.97); }
+  100% { opacity: 1; transform: none; }
+}
+/* Entrada escalonada de listas (biblioteca, miembros, planes) */
+@keyframes vx-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+/* Aparición del resultado: leve desenfoque que se resuelve */
+@keyframes vx-reveal {
+  from { opacity: 0; filter: blur(6px); transform: scale(0.985); }
+  to { opacity: 1; filter: blur(0); transform: none; }
+}
+.stagger-item {
+  animation: vx-rise 320ms var(--ease-out-strong) both;
+}
+@for $i from 1 through 12 {
+  .stagger-item:nth-child(#{$i}) {
+    animation-delay: #{($i - 1) * 45}ms;
+  }
+}
+@keyframes vx-toast {
+  0% { opacity: 0; transform: translateX(36px) scale(0.94); }
+  60% { transform: translateX(-3px) scale(1.01); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes vx-toasticon {
+  0% { transform: scale(0) rotate(-40deg); }
+  60% { transform: scale(1.18) rotate(6deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+@keyframes vx-check {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes vx-prog {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+@keyframes vx-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes vx-float2 {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(12px) rotate(8deg); }
+}
+@keyframes vx-ring {
+  0% { transform: scale(0.55); opacity: 0.5; }
+  100% { transform: scale(2); opacity: 0; }
+}
+@keyframes vx-drift {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(14px, -14px); }
+}
+@keyframes vx-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.9); }
+}
+/* View Transitions entre rutas: cruce sobrio y rápido */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 240ms;
+  animation-timing-function: var(--ease-out-strong);
+}
+
+/* Login <-> Registro: el panel violeta y el formulario cruzan en morph */
+::view-transition-group(auth-brand),
+::view-transition-group(auth-form) {
+  animation-duration: 460ms;
+  animation-timing-function: var(--ease-in-out-strong);
+}
+::view-transition-old(auth-brand),
+::view-transition-new(auth-brand),
+::view-transition-old(auth-form),
+::view-transition-new(auth-form) {
+  animation-duration: 460ms;
+  animation-timing-function: var(--ease-in-out-strong);
+  height: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

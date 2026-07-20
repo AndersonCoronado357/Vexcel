@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Vexcel — Convierte PNG/JPG a SVG</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Vexcel convierte imágenes PNG y JPG a SVG vectorizado. Ideal para logos e iconos.">
+  <link rel="icon" type="image/svg+xml" href="assets/vexcel-icon.svg">
+  <!-- PWA (instalable) -->
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0B0B0F">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Vexcel">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <app-root></app-root>
+  <script>
+    // Registra el service worker para que Vexcel sea instalable como PWA.
+    // ?v= fuerza refresco cuando cambie sw.js (salta caché del proxy/CDN).
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/sw.js?v=1').catch(function () {});
+      });
+    }
+  </script>
+</body>
+</html>
