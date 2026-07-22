@@ -1,0 +1,335 @@
+<input #fileInput type="file" accept="image/png,image/jpeg" hidden (change)="onFileInput($event)" />
+
+@if (!st.isLoaded()) {
+  <!-- ========== VACÍO ========== -->
+  <div class="empty-wrap">
+    <div class="empty-box">
+      <div class="empty-badge">Motor potrace · vectorización profesional</div>
+      <div class="empty-head">
+        <div class="empty-title">Convierte tu imagen a <span class="hl">SVG</span></div>
+        <div class="empty-sub">Arrastra un logo o icono y obtén un vector limpio, nítido y escalable en segundos.</div>
+      </div>
+
+      <div
+        class="dropzone"
+        [class.dragging]="dragging()"
+        (click)="browse()"
+        (drop)="onDrop($event)"
+        (dragover)="onDragOver($event)"
+        (dragleave)="dragging.set(false)"
+      >
+        <div class="dz-icon">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#6D4AFF" stroke-width="1.9"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <path d="M17 8l-5-5-5 5" />
+            <path d="M12 3v13" />
+          </svg>
+        </div>
+        <div class="dz-title">Arrastra una imagen aquí</div>
+        <div class="dz-sub">o haz clic para seleccionar un archivo</div>
+        <div class="dz-cta">Seleccionar imagen</div>
+        <div class="dz-formats">
+          <span class="fmt-chip">PNG</span>
+          <span class="fmt-chip">JPG</span>
+          <span class="fmt-sep">hasta 20 MB</span>
+        </div>
+      </div>
+
+      <!-- Tarjetas de capacidades -->
+      <div class="feat-grid">
+        <div class="feat-card stagger-item">
+          <div class="feat-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="13.5" cy="6.5" r="3.5" /><circle cx="6.5" cy="13.5" r="3.5" /><circle cx="16" cy="16" r="4" />
+            </svg>
+          </div>
+          <div class="feat-title">Un color o color completo</div>
+          <div class="feat-sub">Siluetas nítidas o la paleta real de tu imagen.</div>
+        </div>
+        <div class="feat-card stagger-item">
+          <div class="feat-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.7-.9L9.2 3.9A2 2 0 0 0 7.5 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z" transform="scale(0)" />
+              <path d="M12 3v13M12 3l-4 4M12 3l4 4" />
+              <path d="M4 21h16" />
+            </svg>
+          </div>
+          <div class="feat-title">SVG y PNG en alta res.</div>
+          <div class="feat-sub">Descarga hasta 4K con controles finos.</div>
+        </div>
+        <div class="feat-card stagger-item">
+          <div class="feat-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.7-.9L9.2 3.9A2 2 0 0 0 7.5 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z" />
+            </svg>
+          </div>
+          <div class="feat-title">Biblioteca y equipos</div>
+          <div class="feat-sub">Guarda, comparte y organiza en carpetas.</div>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8E8EA0" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 16v-4" />
+          <path d="M12 8h.01" />
+        </svg>
+        <div class="info-text">
+          <strong>Funciona mejor con logos e iconos planos.</strong> Las fotos con degradados y
+          sombras dan resultados pobres al vectorizar.
+        </div>
+      </div>
+    </div>
+  </div>
+} @else {
+  <!-- ========== CARGADO ========== -->
+  <div class="body-row">
+    <div class="work-area">
+      @if (!vp.isMobile()) {
+        <div class="panes">
+          <div class="pane">
+            <div class="pane-body pane-orig">
+              <span class="tag tag-neutral">Original</span>
+              <span class="tag tag-chip">{{ st.srcFmt() }}</span>
+              <img class="fit-img" [src]="st.originalUrl()" alt="Imagen original" />
+            </div>
+          </div>
+          <div class="pane">
+            <div class="pane-body" [class.checker]="st.settings().bg === 'transparent'"
+              [class.bg-white]="st.settings().bg === 'white'">
+              <span class="tag tag-accent">{{ resultTag() }}</span>
+              <span class="tag tag-chip">{{ st.codeView() ? 'CÓDIGO' : 'VECTOR' }}</span>
+              @if (!st.codeView()) {
+                @if (st.svgUrl()) {
+                  <img class="fit-img result-img" [src]="st.svgUrl()" alt="Resultado SVG" />
+                }
+              } @else if (st.result(); as r) {
+                <div class="code-in-pane">
+                  <pre>{{ r.svg }}</pre>
+                  <button type="button" class="code-copy" (click)="st.copySvg()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="9" y="9" width="13" height="13" rx="2" />
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>
+                    Copiar
+                  </button>
+                </div>
+              }
+              @if (st.processing()) {
+                <div class="loader-overlay">
+                  <img src="assets/vexcel-icon.svg" alt="" width="46" height="46"
+                    style="animation:vx-pulse 1.2s ease-in-out infinite" />
+                  <span>Vectorizando…</span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      } @else {
+        @if (!st.codeView()) {
+          <div
+            class="wipe"
+            (pointerdown)="sliderDown($event)"
+            (pointermove)="sliderMove($event)"
+            (pointerup)="sliderUp()"
+            (pointercancel)="sliderUp()"
+          >
+            <div class="wipe-orig">
+              <img class="fit-img" [src]="st.originalUrl()" alt="Imagen original" />
+            </div>
+            <div class="wipe-clip" [class.checker]="st.settings().bg === 'transparent'"
+              [class.bg-white]="st.settings().bg === 'white'" [style.width.%]="sliderPos()">
+              <div class="wipe-inner">
+                @if (st.svgUrl()) {
+                  <img class="fit-img" [src]="st.svgUrl()" alt="Resultado SVG" />
+                }
+              </div>
+            </div>
+            <div class="wipe-handle" [style.left.%]="sliderPos()">
+              <div class="wipe-knob">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M8 7l-5 5 5 5" />
+                  <path d="M16 7l5 5-5 5" />
+                </svg>
+              </div>
+            </div>
+            <span class="tag tag-accent">SVG</span>
+            <span class="tag tag-neutral-right">Original</span>
+            @if (st.processing()) {
+              <div class="loader-overlay">
+                <img src="assets/vexcel-icon.svg" alt="" width="46" height="46"
+                  style="animation:vx-pulse 1.2s ease-in-out infinite" />
+                <span>Vectorizando…</span>
+              </div>
+            }
+          </div>
+        } @else if (st.result(); as r) {
+          <div class="mobile-code">
+            <pre>{{ r.svg }}</pre>
+            <button type="button" class="code-copy" (click)="st.copySvg()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" />
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+              </svg>
+              Copiar
+            </button>
+          </div>
+        }
+      }
+
+      <!-- Barra inferior -->
+      <div class="toolbar">
+        <div class="meta">
+          <span class="meta-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B9B9C7" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 3h18v18H3z" />
+              <path d="M3 9h18M9 3v18" />
+            </svg>
+            {{ dims() }}
+          </span>
+          <span class="dot">·</span>
+          <span>{{ sizeText() }}</span>
+          @if (st.usage().limit !== null) {
+            <span class="dot">·</span>
+            <span>{{ st.usage().used }}/{{ st.usage().limit }} Full HD este mes</span>
+          }
+        </div>
+        <div class="actions">
+          <div class="png-menu-wrap">
+            <button type="button" class="btn-ghost" (click)="onSave($event)">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9" />
+                <path d="m8 12 3 3 5-6" />
+              </svg>
+              Guardar
+            </button>
+            @if (saveMenuOpen() && teamFolders() !== null && teamFolders() !== 'NOTEAM') {
+              <div class="png-menu save-menu" (click)="$event.stopPropagation()">
+                <button type="button" class="png-opt" (click)="savePersonal()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M4 21a8 8 0 0 1 16 0" />
+                  </svg>
+                  <span class="png-opt-label">Mi biblioteca</span>
+                </button>
+                <div class="save-menu-sep"></div>
+                <div class="save-menu-title">{{ $any(teamFolders()).teamName }}</div>
+                @for (f of $any(teamFolders()).folders; track f.id) {
+                  <button type="button" class="png-opt" (click)="saveToFolder(f.id, f.name)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.7-.9L9.2 3.9A2 2 0 0 0 7.5 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z" />
+                    </svg>
+                    <span class="png-opt-label">{{ f.name }}</span>
+                    <span class="png-opt-size">{{ f.count }}</span>
+                  </button>
+                }
+              </div>
+            }
+          </div>
+          <button type="button" class="btn-ghost" [class.code-active]="st.codeView()"
+            (click)="st.codeView.set(!st.codeView())">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 18l6-6-6-6" />
+              <path d="M8 6l-6 6 6 6" />
+            </svg>
+            {{ st.codeView() ? 'Ver imagen' : 'Ver código' }}
+          </button>
+          <button type="button" class="btn-ghost" (click)="st.copySvg()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" />
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+            </svg>
+            Copiar
+          </button>
+          <div class="png-menu-wrap">
+            <button type="button" class="btn-ghost" (click)="pngMenuOpen.set(!pngMenuOpen()); $event.stopPropagation()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="3" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <path d="m21 15-5-5L5 21" />
+              </svg>
+              PNG
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+            @if (pngMenuOpen()) {
+              <div class="png-menu" (click)="$event.stopPropagation()">
+                @for (opt of pngOptions; track opt.q) {
+                  <button type="button" class="png-opt" [class.locked]="qualityLocked(opt.q)"
+                    (click)="pickPng(opt.q)">
+                    <span class="png-opt-label">{{ opt.label }}</span>
+                    <span class="png-opt-size">{{ opt.size }}</span>
+                    @if (qualityLocked(opt.q)) {
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="11" width="16" height="10" rx="2.5" />
+                        <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+                      </svg>
+                    } @else if (opt.q === 'fullhd' && isFreePlan() && st.usage().limit !== null) {
+                      <span class="png-opt-count">{{ st.usage().limit! - st.usage().used }} rest.</span>
+                    }
+                  </button>
+                }
+              </div>
+            }
+          </div>
+          <button type="button" class="btn-primary" (click)="st.download()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <path d="M7 10l5 5 5-5" />
+              <path d="M12 15V3" />
+            </svg>
+            Descargar .svg
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controles: sidebar escritorio / bottom sheet móvil -->
+    @if (!vp.isMobile()) {
+      <aside class="controls-side">
+        <vx-controls />
+      </aside>
+    }
+  </div>
+
+  @if (vp.isMobile()) {
+    @if (st.sheetOpen()) {
+      <div class="backdrop" (click)="st.sheetOpen.set(false)"></div>
+    }
+    <div class="sheet" [class.open]="st.sheetOpen()">
+      <vx-controls />
+    </div>
+    @if (!st.sheetOpen()) {
+      <button type="button" class="fab" (click)="st.sheetOpen.set(true)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="21" x2="4" y2="14" /><line x1="4" y1="10" x2="4" y2="3" />
+          <line x1="12" y1="21" x2="12" y2="12" /><line x1="12" y1="8" x2="12" y2="3" />
+          <line x1="20" y1="21" x2="20" y2="16" /><line x1="20" y1="12" x2="20" y2="3" />
+          <line x1="1" y1="14" x2="7" y2="14" /><line x1="9" y1="8" x2="15" y2="8" />
+          <line x1="17" y1="16" x2="23" y2="16" />
+        </svg>
+        Ajustes
+      </button>
+    }
+  }
+}
