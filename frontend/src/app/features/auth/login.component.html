@@ -1,0 +1,91 @@
+@if (googleEntering()) {
+  <div class="google-loading">
+    <vx-mark [size]="42" />
+    <div class="gl-spin"></div>
+    <div class="gl-text">Entrando…</div>
+  </div>
+} @else {
+<div class="auth-split">
+  <div class="brand-pane">
+    <div class="brand-deco">
+      <div style="position:absolute;width:360px;height:360px;border-radius:50%;background:rgba(255,255,255,.09);top:-120px;right:-90px;animation:vx-drift 9s ease-in-out infinite"></div>
+      <div style="position:absolute;width:230px;height:230px;border-radius:50%;background:rgba(255,255,255,.07);bottom:-70px;left:-60px;animation:vx-drift 11s ease-in-out infinite reverse"></div>
+      <div style="position:absolute;top:22%;left:14%;width:54px;height:54px;border-radius:16px;background:rgba(255,255,255,.12);animation:vx-float2 7s ease-in-out infinite"></div>
+      <svg style="position:absolute;bottom:24%;right:16%;animation:vx-float 6s ease-in-out infinite" width="60" height="60" viewBox="0 0 24 24">
+        <path d="M12 2 22 20 2 20Z" fill="rgba(255,255,255,.1)" />
+      </svg>
+      <div style="position:absolute;top:16%;right:26%;width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.55)"></div>
+    </div>
+    <div class="brand-content">
+      <div class="brand-logo-row">
+        <div class="logo-chip">
+          <vx-mark [size]="22" variant="white" />
+        </div>
+        <span>Vexcel</span>
+      </div>
+      <div class="brand-mid">
+        <div class="brand-icon-float">
+          <vx-mark [size]="60" variant="white" />
+        </div>
+        <div class="brand-headline">Vectoriza logos e iconos con calidad profesional.</div>
+        <div class="brand-copy">Convierte PNG y JPG en SVG nítidos y ligeros en segundos.</div>
+      </div>
+      <div class="brand-foot">PNG · JPG → SVG</div>
+    </div>
+  </div>
+
+  <div class="form-pane">
+    <form class="form-box" (ngSubmit)="submit()">
+      <div class="auth-title">Bienvenido de vuelta</div>
+      <div class="auth-sub">Inicia sesión para seguir vectorizando.</div>
+
+      <vx-google-button style="display:block;margin-top:28px" label="Continuar con Google" />
+
+      <div class="divider"><div class="line"></div><span>o con tu correo</span><div class="line"></div></div>
+
+      <div class="fields">
+        <div>
+          <div class="field-label">Correo</div>
+          <div class="field-wrap">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8E8EA0" stroke-width="1.9"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="3" />
+              <path d="m2 7 10 6 10-6" />
+            </svg>
+            <input class="input" name="email" [(ngModel)]="email" placeholder="tu@correo.com"
+              spellcheck="false" autocomplete="email" />
+          </div>
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div class="field-label">Contraseña</div>
+            <a routerLink="/recuperar" class="forgot">¿Olvidaste?</a>
+          </div>
+          <div class="field-wrap">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8E8EA0" stroke-width="1.9"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="11" width="16" height="10" rx="2.5" />
+              <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+            </svg>
+            <input class="input" name="pass" [(ngModel)]="pass" type="password" placeholder="········"
+              autocomplete="current-password" />
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit">
+        @if (busy()) {
+          <span class="spin"></span>
+        } @else {
+          <span>Iniciar sesión</span>
+        }
+      </button>
+
+      <div class="switch-line">
+        ¿No tienes cuenta?
+        <button type="button" routerLink="/registro">Crea una gratis</button>
+      </div>
+    </form>
+  </div>
+</div>
+}

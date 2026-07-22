@@ -1,0 +1,425 @@
+﻿/* Estilos compartidos de las pantallas de autenticaciÃ³n (del diseÃ±o) */
+
+.auth-split {
+  flex: 1;
+  min-height: 100dvh;
+  display: flex;
+}
+
+/* Pantalla de carga al volver de Google (sin alertas ni formulario). */
+.google-loading {
+  flex: 1;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background: var(--surface);
+  animation: vx-fade 0.25s ease;
+}
+.gl-spin {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 3px solid var(--n-100);
+  border-top-color: var(--a-500);
+  animation: vx-spin 0.7s linear infinite;
+}
+.gl-text {
+  font: 600 15px var(--font-sans);
+  color: var(--n-500);
+}
+
+/* Cabecera de marca solo-móvil (usada por registro; oculta en escritorio) */
+.m-brand-header {
+  display: none;
+}
+
+.form-pane {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  overflow-y: auto;
+  background: var(--surface);
+  /* El formulario cruza con morph entre login y registro */
+  view-transition-name: auth-form;
+}
+
+.form-box {
+  width: 100%;
+  max-width: 360px;
+  animation: vx-pop 0.4s ease;
+}
+
+.auth-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--n-900);
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+
+.auth-sub {
+  font-size: 15px;
+  color: var(--n-400);
+  margin-top: 7px;
+  text-align: center;
+}
+
+.btn-google {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--surface);
+  color: var(--n-700);
+  border-radius: 13px;
+  font: 600 14.5px var(--font-sans);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+.btn-google:hover {
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+
+  .line {
+    flex: 1;
+    height: 1px;
+    background: var(--n-100);
+  }
+  span {
+    font-size: 12px;
+    color: var(--n-300);
+  }
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.field-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--n-600);
+  margin-bottom: 7px;
+}
+
+.field-wrap {
+  position: relative;
+
+  svg {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+}
+
+.input {
+  width: 100%;
+  height: 50px;
+  background: var(--n-50);
+  border-radius: 13px;
+  padding: 0 14px 0 42px;
+  font: 500 15px var(--font-sans);
+  color: var(--n-800);
+  transition: box-shadow 0.15s, background 0.15s;
+
+  &:focus {
+    box-shadow: 0 0 0 2px var(--a-500);
+    background: var(--surface);
+  }
+}
+
+.btn-submit {
+  width: 100%;
+  margin-top: 24px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--a-500);
+  color: #fff;
+  border-radius: 14px;
+  font: 600 15px var(--font-sans);
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover {
+    background: var(--a-600);
+  }
+}
+
+.spin {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-top-color: #fff;
+  display: inline-block;
+  animation: vx-spin 0.7s linear infinite;
+}
+
+.switch-line {
+  text-align: center;
+  font-size: 14px;
+  color: var(--n-500);
+  margin-top: 22px;
+
+  button {
+    background: none;
+    color: var(--a-500);
+    font: 600 14px var(--font-sans);
+    cursor: pointer;
+    padding: 0;
+  }
+  button:hover {
+    color: var(--a-600);
+  }
+}
+
+
+.brand-pane {
+  position: relative;
+  flex: 0 0 46%;
+  background: var(--a-500);
+  padding: 42px;
+  overflow: hidden;
+  /* El panel violeta se desliza de un lado al otro entre login y registro */
+  view-transition-name: auth-brand;
+}
+
+.brand-deco {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.brand-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.brand-logo-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  .logo-chip {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.16);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  span {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+}
+
+.brand-pane-register {
+  background: var(--a-600);
+  padding: 52px;
+  display: flex;
+  align-items: center;
+}
+
+.brand-mid {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 22px;
+  padding: 40px 0;
+}
+
+.brand-icon-float {
+  width: 112px;
+  height: 112px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.13);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: vx-float 5s ease-in-out infinite;
+}
+
+.brand-headline {
+  font-size: 29px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  max-width: 330px;
+}
+
+.brand-copy {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.55;
+  max-width: 330px;
+}
+
+.brand-foot {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: var(--font-mono);
+}
+
+.forgot {
+  background: none;
+  color: var(--a-500);
+  font: 600 12.5px var(--font-sans);
+  cursor: pointer;
+  padding: 0;
+}
+.forgot:hover {
+  color: var(--a-600);
+}
+
+.benefits {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 32px;
+
+  .benefit {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+  }
+  .benefit-check {
+    width: 28px;
+    height: 28px;
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .benefit-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .benefit-desc {
+    font-size: 13.5px;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.45;
+    margin-top: 2px;
+  }
+}
+
+@media (max-width: 759px) {
+  .auth-split {
+    flex-direction: column;
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+  }
+
+  /* La marca queda como una cabecera delgada: solo el logo, centrado. */
+  .brand-pane,
+  .m-brand-header {
+    flex: 0 0 auto;
+    min-height: 0;
+    padding: 16px 24px;
+  }
+  .m-brand-header {
+    display: block;
+    background: var(--a-500);
+  }
+  .reg-inline-logo {
+    display: none !important;
+  }
+  .brand-pane-register,
+  .brand-deco,
+  .brand-mid,
+  .brand-foot {
+    display: none;
+  }
+  .brand-content {
+    height: auto;
+  }
+  .brand-logo-row {
+    justify-content: center;
+
+    .logo-chip {
+      width: 34px;
+      height: 34px;
+    }
+    span {
+      font-size: 18px;
+    }
+  }
+
+  /* El formulario ocupa el resto de la pantalla, centrado y sin scroll. */
+  .form-pane {
+    flex: 1 1 auto;
+    min-height: 0;
+    align-items: center;
+    padding: 18px 22px calc(18px + env(safe-area-inset-bottom));
+  }
+  .form-box {
+    animation: none;
+  }
+
+  .auth-title {
+    font-size: 22px;
+  }
+  .auth-sub {
+    font-size: 13.5px;
+    margin-top: 4px;
+  }
+
+  /* Compactar para que login/registro quepan en un viewport. */
+  .form-box vx-google-button {
+    margin-top: 16px !important;
+  }
+  .divider {
+    margin: 13px 0;
+  }
+  .fields {
+    gap: 11px;
+  }
+  .field-label {
+    margin-bottom: 5px;
+  }
+  .input,
+  .btn-google,
+  .btn-submit {
+    height: 46px;
+  }
+  .btn-submit {
+    margin-top: 15px;
+  }
+  .switch-line {
+    margin-top: 13px;
+  }
+}
+
+
+

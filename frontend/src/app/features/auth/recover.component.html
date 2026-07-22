@@ -1,0 +1,83 @@
+<div class="recover-wrap">
+  <div class="recover-deco">
+    <div style="position:absolute;width:420px;height:420px;border-radius:50%;background:rgba(109,74,255,.08);top:-140px;left:-100px;animation:vx-drift 12s ease-in-out infinite"></div>
+    <div style="position:absolute;width:300px;height:300px;border-radius:50%;background:rgba(139,123,255,.1);bottom:-100px;right:-60px;animation:vx-drift 10s ease-in-out infinite reverse"></div>
+    <div style="position:absolute;top:16%;right:20%;width:46px;height:46px;border-radius:14px;background:rgba(109,74,255,.12);animation:vx-float2 8s ease-in-out infinite"></div>
+  </div>
+
+  <div class="recover-card">
+    <div class="recover-header">
+      <div style="position:absolute;inset:0;overflow:hidden">
+        <div style="position:absolute;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.1);top:-70px;right:-40px"></div>
+      </div>
+      @if (!sent()) {
+        <div class="header-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="4" width="20" height="16" rx="3" />
+            <path d="m2 7 10 6 10-6" />
+          </svg>
+        </div>
+      } @else {
+        <div style="position:relative;width:74px;height:74px">
+          <div class="ring"></div>
+          <div class="header-check">
+            <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 6 9 17l-5-5"
+                style="stroke-dasharray:30;stroke-dashoffset:30;animation:vx-check 1s ease forwards" />
+            </svg>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="recover-body">
+      @if (!sent()) {
+        <form (ngSubmit)="submit()">
+          <div class="recover-title">Recupera tu acceso</div>
+          <div class="recover-sub">
+            Escribe tu correo y te enviaremos un enlace para restablecer tu contraseña.
+          </div>
+          <div class="field-label" style="margin-top:22px">Correo</div>
+          <div class="field-wrap">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8E8EA0" stroke-width="1.9"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="3" />
+              <path d="m2 7 10 6 10-6" />
+            </svg>
+            <input class="input" name="email" [(ngModel)]="email" placeholder="tu@correo.com"
+              spellcheck="false" autocomplete="email" />
+          </div>
+          <button type="submit" class="btn-submit">
+            @if (busy()) {
+              <span class="spin"></span>
+            } @else {
+              <span>Enviar enlace</span>
+            }
+          </button>
+          <div style="text-align:center;margin-top:20px">
+            <button type="button" class="back-link" routerLink="/login">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5" />
+                <path d="m12 19-7-7 7-7" />
+              </svg>
+              Volver a iniciar sesión
+            </button>
+          </div>
+        </form>
+      } @else {
+        <div class="recover-title">Revisa tu correo</div>
+        <div class="recover-sub">
+          Enviamos un enlace a <strong>{{ email }}</strong>. Puede tardar un par de minutos.
+        </div>
+        <button type="button" class="btn-submit" routerLink="/login"><span>Volver al inicio</span></button>
+        <div style="text-align:center;margin-top:16px;font-size:13.5px;color:var(--n-400)">
+          ¿No llegó?
+          <button type="button" class="resend" (click)="submit()">Reenviar</button>
+        </div>
+      }
+    </div>
+  </div>
+</div>
