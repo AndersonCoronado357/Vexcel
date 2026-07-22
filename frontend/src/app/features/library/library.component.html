@@ -1,0 +1,187 @@
+<div class="page-scroll">
+  <div class="page-inner">
+    <div class="profile-header">
+      <button type="button" class="big-avatar-btn" (click)="avatarInput.click()"
+        [attr.aria-label]="'Cambiar foto de perfil'">
+        @if (auth.user()?.avatar) {
+          <img class="big-avatar big-avatar-img" [src]="auth.user()!.avatar" alt="Tu foto de perfil" />
+        } @else {
+          <div class="big-avatar">{{ auth.initials() }}</div>
+        }
+        <span class="avatar-overlay">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+            <circle cx="12" cy="13" r="4" />
+          </svg>
+        </span>
+      </button>
+      <input #avatarInput type="file" accept="image/png,image/jpeg,image/webp" hidden
+        (change)="onAvatar($event)" />
+      @if (avatarSrc(); as s) {
+        <vx-avatar-editor [src]="s" (save)="onAvatarSave($event)" (cancel)="avatarSrc.set(null)" />
+      }
+      <div class="profile-info">
+        <div class="profile-name">{{ auth.user()?.name }}</div>
+        <div class="profile-email">{{ auth.user()?.email }}</div>
+        <div class="profile-chips">
+          <span class="plan-badge" [class.plan-paid]="auth.user()?.plan !== 'free'">{{ auth.planLabel() }}</span>
+          <span class="count-chip">{{ countText() }}</span>
+        </div>
+      </div>
+      <a class="btn-primary" routerLink="/planes">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="m12 2 2.4 7.4H22l-6 4.5 2.3 7.1-6.3-4.6-6.3 4.6L7.9 14 2 9.4h7.6z" />
+        </svg>
+        Mejorar plan
+      </a>
+    </div>
+
+    <!-- Carpetas compartidas del equipo -->
+    @if (team(); as t) {
+      @if (!openFolder()) {
+        <div class="section-title">Carpetas de {{ t.teamName }}</div>
+        <div class="folders-grid">
+          @for (f of t.folders; track f.id) {
+            <div class="folder-card stagger-item" (click)="enterFolder(f)">
+              <div class="folder-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.7-.9L9.2 3.9A2 2 0 0 0 7.5 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z" />
+                </svg>
+              </div>
+              <div class="folder-info">
+                <div class="folder-name">{{ f.name }}</div>
+                <div class="folder-count">{{ f.count }} {{ f.count === 1 ? 'archivo' : 'archivos' }}</div>
+              </div>
+              @if (canManageFolders() && t.folders.length > 1) {
+                <button type="button" class="del" (click)="deleteFolder(f, $event)"
+                  [attr.aria-label]="'Eliminar carpeta ' + f.name">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                  </svg>
+                </button>
+              }
+            </div>
+          }
+          <!-- Crear carpeta (inline, sin modal) -->
+          @if (!creatingFolder()) {
+            <button type="button" class="folder-card folder-new" (click)="creatingFolder.set(true)">
+              <div class="folder-icon folder-icon-new">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+              </div>
+              <div class="folder-name" style="color:var(--a-600)">Nueva carpeta</div>
+            </button>
+          } @else {
+            <div class="folder-card folder-new-input">
+              <input class="folder-input" [(ngModel)]="newFolderName" placeholder="Nombre de la carpeta"
+                maxlength="40" (keydown.enter)="createFolder()" (blur)="createFolder()" autofocus />
+            </div>
+          }
+        </div>
+      } @else {
+        <!-- Contenido de una carpeta -->
+        <div class="folder-head">
+          <button type="button" class="btn-ghost" (click)="backToFolders()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 12H5" />
+              <path d="m12 19-7-7 7-7" />
+            </svg>
+            Carpetas
+          </button>
+          <div class="section-title" style="margin:0">
+            {{ openFolder()!.name }} · {{ t.teamName }}
+          </div>
+        </div>
+        @if (folderItems().length > 0) {
+          <div class="lib-grid">
+            @for (item of folderItems(); track item.id) {
+              <div class="card stagger-item" (click)="open(item)">
+                <div class="thumb">
+                  @if (item.preview) {
+                    <img [src]="item.preview" alt="" />
+                  }
+                </div>
+                <div class="card-foot">
+                  <div class="card-info">
+                    <div class="card-name">{{ item.originalName }}</div>
+                    <div class="card-meta">
+                      {{ formatKb(item.svgBytes) }} · {{ item.savedBy }}
+                    </div>
+                  </div>
+                  <button type="button" class="del" (click)="removeTeamItem(item, $event)"
+                    [attr.aria-label]="'Eliminar ' + item.originalName">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        } @else if (!folderLoading()) {
+          <div class="empty">
+            <div class="empty-title">Esta carpeta está vacía</div>
+            <div class="empty-sub">Guarda una conversión aquí desde el botón "Guardar" del conversor.</div>
+          </div>
+        }
+      }
+    }
+
+    <!-- La biblioteca personal solo se muestra cuando NO hay una carpeta abierta -->
+    @if (!openFolder()) {
+      <div class="section-title">Tu biblioteca</div>
+
+      @if (items().length > 0) {
+        <div class="lib-grid">
+          @for (item of items(); track item.id) {
+            <div class="card stagger-item" (click)="open(item)">
+              <div class="thumb">
+                @if (item.preview) {
+                  <img [src]="item.preview" alt="" />
+                }
+              </div>
+              <div class="card-foot">
+                <div class="card-info">
+                  <div class="card-name">{{ item.originalName }}</div>
+                  <div class="card-meta">
+                    {{ formatKb(item.svgBytes) }} · {{ item.createdAt | date: 'd MMM' }}
+                  </div>
+                </div>
+                <button type="button" class="del" (click)="remove(item, $event)"
+                  [attr.aria-label]="'Eliminar ' + item.originalName">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      } @else if (loaded()) {
+        <div class="empty">
+          <div class="empty-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#6D4AFF" stroke-width="1.8"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="4" />
+              <path d="M8 12h8M12 8v8" />
+            </svg>
+          </div>
+          <div class="empty-title">Aún no has guardado nada</div>
+          <div class="empty-sub">Convierte una imagen y pulsa "Guardar" para verla aquí.</div>
+          <button type="button" class="btn-primary" style="margin-top:20px" (click)="goConvert()">
+            Convertir una imagen
+          </button>
+        </div>
+      }
+    }
+  </div>
+</div>
