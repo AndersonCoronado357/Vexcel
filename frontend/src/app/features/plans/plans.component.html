@@ -1,0 +1,164 @@
+<div class="page-scroll">
+  <div class="page-inner">
+    <div class="head">
+      <div class="title">Elige tu plan</div>
+      <div class="sub">Empieza gratis y sube de nivel cuando lo necesites. Sin permanencia.</div>
+    </div>
+
+    @if (ready()) {
+    @if (hasActiveSub() && sub(); as s) {
+      <div class="sub-banner">
+        <div class="sub-info">
+          <div class="sub-plan">Plan {{ s.plan | titlecase }} activo</div>
+          <div class="sub-detail">
+            @if (s.autoRenew) {
+              Se renueva automáticamente el <strong>{{ renewLabel() }}</strong>.
+            } @else {
+              Activo hasta el <strong>{{ renewLabel() }}</strong> · no se renovará.
+            }
+          </div>
+        </div>
+        @if (s.autoRenew) {
+          <button type="button" class="cancel-btn" [disabled]="cancelling()" (click)="cancelSub()">
+            {{ cancelling() ? 'Cancelando…' : 'Cancelar renovación' }}
+          </button>
+        }
+      </div>
+    }
+
+    <div class="scope-row">
+      <div class="seg-track" style="display:inline-flex">
+        <button type="button" class="seg-btn" [class.active]="scope() === 'individual'"
+          (click)="scope.set('individual')">Individual</button>
+        <button type="button" class="seg-btn" [class.active]="scope() === 'team'"
+          (click)="scope.set('team')">Equipos</button>
+      </div>
+    </div>
+
+    <div class="plans-grid">
+      @for (p of plans(); track p.id) {
+        <div class="plan-card stagger-item" [class.hot]="p.popular" [class.current]="isCurrent(p)">
+          <!-- Decoración -->
+          <div class="deco">
+            <div class="deco-circle deco-1"></div>
+            <div class="deco-circle deco-2"></div>
+          </div>
+
+          @if (p.popular) {
+            <div class="popular-badge">Popular</div>
+          }
+          @if (isCurrent(p) && !p.popular) {
+            <div class="current-badge">Plan actual</div>
+          }
+
+          <div class="card-body">
+            <div class="plan-icon">
+              @switch (p.id) {
+                @case ('free') {
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" />
+                  </svg>
+                }
+                @case ('pro') {
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m12 2 2.4 7.4H22l-6 4.5 2.3 7.1-6.3-4.6-6.3 4.6L7.9 14 2 9.4h7.6z" />
+                  </svg>
+                }
+                @case ('studio') {
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m12 2 10 6-10 6L2 8Z" />
+                    <path d="m2 14 10 6 10-6" />
+                  </svg>
+                }
+                @case ('starter') {
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <line x1="19" y1="8" x2="19" y2="14" />
+                    <line x1="22" y1="11" x2="16" y2="11" />
+                  </svg>
+                }
+                @case ('business') {
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2" />
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                  </svg>
+                }
+                @case ('enterprise') {
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 21h18" />
+                    <path d="M5 21V7l7-4 7 4v14" />
+                    <path d="M9 21v-4h6v4" />
+                    <path d="M9 10h.01M15 10h.01M9 14h.01M15 14h.01" />
+                  </svg>
+                }
+              }
+            </div>
+
+            <div class="plan-name">{{ p.name }}</div>
+            <div class="price-row">
+              <span class="price">{{ p.price }}</span>
+              <span class="per">{{ p.per }}</span>
+            </div>
+            <div class="desc">{{ p.desc }}</div>
+
+            @if (p.seats) {
+              <div class="seats-chip">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                </svg>
+                {{ p.seats }}
+              </div>
+            }
+
+            <div class="divider"></div>
+
+            <div class="features">
+              @for (f of p.features; track f) {
+                <div class="feature">
+                  <span class="check">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                  </span>
+                  <span>{{ f }}</span>
+                </div>
+              }
+            </div>
+
+            <div class="tagline">{{ p.tagline }}</div>
+
+            <button type="button" class="pick-btn" [disabled]="isCurrent(p) || processing() !== null"
+              (click)="pick(p)">
+              @if (processing() === p.id) {
+                Redirigiendo al pago…
+              } @else {
+                {{ isCurrent(p) ? 'Plan actual' : p.cta }}
+              }
+            </button>
+            @if (payEnabled() && p.id !== 'free' && !isCurrent(p)) {
+              <div class="pay-note">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="4" y="11" width="16" height="10" rx="2.5" /><path d="M8 11V7a4 4 0 0 1 8 0v4" />
+                </svg>
+                COP · pago seguro con Wompi
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+    }
+
+  </div>
+</div>

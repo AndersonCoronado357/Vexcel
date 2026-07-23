@@ -1,0 +1,376 @@
+﻿:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.page-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  background: var(--n-50);
+}
+
+.page-inner {
+  width: 100%;
+  min-height: 100%;
+  margin: 0 auto;
+  padding: 32px 40px 40px;
+  animation: vx-fade 0.35s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.head {
+  text-align: center;
+}
+.title {
+  font-size: 27px;
+  font-weight: 700;
+  color: var(--n-900);
+  letter-spacing: -0.02em;
+}
+.sub {
+  font-size: 15px;
+  color: var(--n-400);
+  margin-top: 8px;
+}
+
+.sub-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+  padding: 16px 20px;
+  background: var(--a-soft);
+  border-radius: 16px;
+}
+.sub-plan {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--a-600);
+}
+.sub-detail {
+  font-size: 13px;
+  color: var(--n-500);
+  margin-top: 2px;
+
+  strong {
+    color: var(--n-800);
+  }
+}
+.cancel-btn {
+  padding: 9px 16px;
+  background: var(--surface);
+  color: var(--n-600);
+  border-radius: 11px;
+  font: 600 13px var(--font-sans);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+
+  &:hover {
+    background: #FDF1EF;
+    color: #C0392B;
+  }
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+}
+
+.scope-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* La fila de tarjetas llena todo el alto restante */
+.plans-grid {
+  display: flex;
+  gap: 18px;
+  margin-top: 24px;
+  flex: 1;
+  align-items: stretch;
+}
+
+.plan-card {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  background: var(--surface);
+  border-radius: 22px;
+  overflow: hidden;
+  transition: background 180ms ease;
+  display: flex;
+
+  /* Hover quieto: tono morado claro (la tarjeta violeta no cambia) */
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(.hot) {
+      background: var(--a-soft);
+    }
+  }
+
+  &.current {
+    }
+}
+
+.card-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 26px 26px;
+  width: 100%;
+}
+
+/* DecoraciÃ³n de fondo */
+.deco {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.deco-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--a-soft);
+}
+.deco-1 {
+  width: 190px;
+  height: 190px;
+  top: -80px;
+  right: -70px;
+}
+.deco-2 {
+  width: 110px;
+  height: 110px;
+  bottom: -50px;
+  left: -40px;
+  opacity: 0.7;
+}
+
+.plan-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: var(--a-soft);
+  color: var(--a-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.popular-badge,
+.current-badge {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 5px 11px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  z-index: 2;
+}
+.popular-badge {
+  background: var(--surface);
+  color: var(--a-600);
+}
+.current-badge {
+  background: var(--a-soft);
+  color: var(--a-600);
+}
+
+.plan-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--n-900);
+}
+
+.price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-top: 10px;
+}
+.price {
+  font-size: 38px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--n-900);
+}
+.per {
+  font-size: 14px;
+  color: var(--n-400);
+}
+
+.desc {
+  font-size: 13.5px;
+  color: var(--n-400);
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+.seats-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  align-self: flex-start;
+  padding: 5px 12px;
+  border-radius: 20px;
+  background: var(--n-50);
+  color: var(--n-600);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.divider {
+  height: 1px;
+  background: var(--n-100);
+  margin: 20px 0;
+}
+
+/* Las features crecen y empujan el CTA al fondo: la tarjeta usa todo el alto */
+.features {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  flex: 1;
+}
+.feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+
+  span:last-child {
+    font-size: 13.5px;
+    color: var(--n-600);
+    line-height: 1.45;
+  }
+}
+.check {
+  width: 20px;
+  height: 20px;
+  border-radius: 7px;
+  background: var(--a-soft);
+  color: var(--a-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.tagline {
+  margin-top: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--n-400);
+  font-family: var(--font-mono);
+  text-align: center;
+}
+
+.pay-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--n-400);
+  font-family: var(--font-mono);
+}
+
+.plan-card.hot .pay-note {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.pick-btn {
+  width: 100%;
+  margin-top: 12px;
+  height: 48px;
+  border-radius: 13px;
+  font: 600 14px var(--font-sans);
+  cursor: pointer;
+  background: var(--a-500);
+  color: #fff;
+  transition: background 0.15s;
+
+  &:hover:not(:disabled) {
+    background: var(--a-600);
+  }
+  &:disabled {
+    background: var(--n-100);
+    color: var(--n-400);
+    cursor: default;
+    box-shadow: none;
+  }
+}
+
+/* Tarjeta destacada (violeta) */
+.plan-card.hot {
+  background: var(--a-500);
+  .deco-circle {
+    background: rgba(255, 255, 255, 0.09);
+  }
+  .plan-icon {
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+  }
+  .plan-name,
+  .price {
+    color: #fff;
+  }
+  .per {
+    color: rgba(255, 255, 255, 0.72);
+  }
+  .desc {
+    color: rgba(255, 255, 255, 0.8);
+  }
+  .seats-chip {
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+  }
+  .divider {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  .feature span:last-child {
+    color: rgba(255, 255, 255, 0.92);
+  }
+  .check {
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+  }
+  .tagline {
+    color: rgba(255, 255, 255, 0.65);
+  }
+  .pick-btn {
+    background: var(--surface);
+    color: var(--a-600);
+    box-shadow: none;
+  }
+  .pick-btn:hover:not(:disabled) {
+    background: var(--n-50);
+  }
+  .pick-btn:disabled {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+  }
+}
+
+@media (max-width: 759px) {
+  .page-inner {
+    padding: 26px 18px 40px;
+  }
+  .plans-grid {
+    flex-direction: column;
+  }
+}
+
+
+
