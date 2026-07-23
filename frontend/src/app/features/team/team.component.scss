@@ -1,0 +1,508 @@
+﻿:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.page-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  background: var(--n-50);
+}
+
+.page-inner {
+  width: 100%;
+  margin: 0 auto;
+  padding: 36px 40px 60px;
+  animation: vx-fade 0.35s ease;
+}
+
+/* Cabecera */
+.team-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 26px 28px;
+}
+
+.team-avatar {
+  width: 68px;
+  height: 68px;
+  border-radius: 20px;
+  background: var(--a-500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.team-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.team-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.team-name {
+  font-size: 23px;
+  font-weight: 700;
+  color: var(--n-900);
+  letter-spacing: -0.02em;
+}
+.edit-btn {
+  background: none;
+  color: var(--n-300);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 7px;
+  display: flex;
+  transition: color 0.15s, background 0.15s;
+
+  &:hover {
+    color: var(--a-600);
+    background: var(--a-soft);
+  }
+}
+.name-input {
+  font: 700 23px var(--font-sans);
+  letter-spacing: -0.02em;
+  color: var(--n-900);
+  background: var(--n-50);
+  border-radius: 10px;
+  padding: 2px 10px;
+  width: min(360px, 100%);
+}
+
+.team-sub {
+  font-size: 14px;
+  color: var(--n-400);
+  margin-top: 3px;
+}
+
+.seats {
+  margin-top: 12px;
+  max-width: 360px;
+}
+.seats-text {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--n-500);
+  font-family: var(--font-mono);
+}
+.seats-bar {
+  height: 6px;
+  border-radius: 4px;
+  background: var(--n-100);
+  margin-top: 6px;
+  overflow: hidden;
+}
+.seats-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--a-500);
+  transition: width 0.3s ease;
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--n-900);
+  margin: 32px 0 14px;
+  letter-spacing: -0.01em;
+}
+
+/* Invitar */
+.invite-card {
+  display: flex;
+  flex-direction: column;
+  /* Contenido centrado verticalmente: ambas tarjetas quedan alineadas */
+  justify-content: center;
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 20px 18px;
+}
+
+.link-card-body {
+  align-items: center;
+}
+
+.inv-input {
+  height: 44px;
+  background: var(--n-50);
+  border-radius: 11px;
+  padding: 0 14px;
+  font: 500 14px var(--font-sans);
+  color: var(--n-800);
+  width: 100%;
+  transition: box-shadow 150ms ease, background 150ms ease;
+
+  &:focus {
+    box-shadow: 0 0 0 2px var(--a-500);
+    background: var(--surface);
+  }
+}
+
+/* El select y el botÃ³n Invitar llenan el ancho de la fila de controles */
+.invite-controls vx-select {
+  flex: 1;
+  min-width: 0;
+}
+.invite-controls vx-select ::ng-deep .wrap,
+.invite-controls vx-select ::ng-deep .trigger {
+  width: 100%;
+}
+.invite-controls vx-select ::ng-deep .trigger {
+  height: 44px;
+  border-radius: 11px;
+  justify-content: space-between;
+}
+.invite-controls .btn-primary {
+  flex: 1;
+  height: 44px;
+  justify-content: center;
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.invite-card .btn-primary:disabled {
+  background: var(--n-100);
+  color: var(--n-400);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* Miembros */
+.members {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.member {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 14px 18px;
+  transition: background 160ms ease;
+
+  /* Hover quieto: solo el tono morado mÃ¡s claro, sin mover ni agrandar */
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: var(--a-soft);
+    }
+  }
+}
+
+.m-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--a-500);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.m-avatar-alt {
+  background: var(--a-soft);
+  color: var(--a-600);
+}
+.m-avatar-photo {
+  object-fit: cover;
+  background: var(--n-100);
+}
+
+.m-info {
+  flex: 1;
+  min-width: 0;
+}
+.m-name {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--n-900);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.m-email {
+  font-size: 12.5px;
+  color: var(--n-400);
+  font-family: var(--font-mono);
+}
+
+.you-chip {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--n-100);
+  color: var(--n-500);
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.role-chip {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 20px;
+}
+.owner-chip {
+  background: var(--a-soft);
+  color: var(--a-600);
+}
+
+.status-chip {
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: var(--n-100);
+  color: var(--n-500);
+}
+.status-active {
+  background: #EAF7EF;
+  color: #1E8E4E;
+}
+
+/* InvitaciÃ³n inline: dos tarjetas lado a lado (correo | enlace/cÃ³digo/QR) */
+.invite-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.invite-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--n-700);
+  margin-bottom: 12px;
+}
+
+.invite-email-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.link-card-body {
+  display: flex;
+  gap: 18px;
+}
+
+.qr-box {
+  width: 150px;
+  height: 150px;
+  border-radius: 14px;
+  background: var(--n-50);
+  padding: 10px;
+  flex-shrink: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 7px;
+    display: block;
+  }
+}
+
+/* Cuadro de preview del invitado â€” mismas dimensiones que el QR */
+.invite-preview {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  border-radius: 14px;
+  background: var(--n-50);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: box-shadow 200ms var(--ease-out-strong);
+
+  &.found {
+    box-shadow: inset 0 0 0 2px var(--a-500);
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+.preview-initials {
+  width: 88px;
+  height: 88px;
+  border-radius: 26px;
+  background: var(--a-500);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  font-weight: 700;
+}
+.preview-muted {
+  background: var(--n-200);
+  color: var(--n-500);
+}
+.preview-badge {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  background: var(--a-500);
+  color: #fff;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.preview-name {
+  font-size: 12.5px;
+  color: var(--a-600);
+  font-weight: 600;
+  margin-top: 8px;
+}
+.invite-controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.im-fields {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.im-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--n-500);
+  margin-bottom: 6px;
+}
+
+.code-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  background: var(--n-50);
+  border-radius: 12px;
+  padding: 11px 14px;
+  cursor: pointer;
+  transition: background 150ms ease;
+  text-align: left;
+
+  &:hover {
+    background: var(--a-soft);
+  }
+}
+.code-text {
+  font-family: var(--font-mono);
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  color: var(--n-900);
+}
+.link-text {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--n-600);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+.copy-hint {
+  font: 600 12px var(--font-sans);
+  color: var(--a-600);
+  flex-shrink: 0;
+}
+.im-note {
+  margin-top: 12px;
+  font-size: 12.5px;
+  color: var(--n-400);
+  line-height: 1.5;
+}
+
+.im-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  flex: 1;
+}
+
+.del-btn {
+  background: none;
+  color: var(--n-300);
+  cursor: pointer;
+  padding: 7px;
+  border-radius: 9px;
+  display: flex;
+  transition: color 0.15s, background 0.15s;
+
+  &:hover {
+    color: #C0392B;
+    background: #FDF1EF;
+  }
+}
+
+.empty-members {
+  background: var(--n-50);
+  border-radius: 14px;
+  padding: 28px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--n-400);
+}
+
+@media (max-width: 759px) {
+  .page-inner {
+    padding: 26px 18px 60px;
+  }
+  .member {
+    flex-wrap: wrap;
+  }
+  .invite-card .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+  .invite-row {
+    grid-template-columns: 1fr;
+  }
+  .link-card-body {
+    flex-direction: column;
+    align-items: center;
+  }
+  .im-fields {
+    width: 100%;
+  }
+}
+
+
+
