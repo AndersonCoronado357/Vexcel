@@ -1,0 +1,47 @@
+<div class="page-scroll">
+  <div class="page-inner">
+    <div class="head">
+      <a class="back" routerLink="/planes">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5" /><path d="m12 19-7-7 7-7" />
+        </svg>
+        Planes
+      </a>
+      <div class="title">Historial de pagos</div>
+      <div class="sub">Todos los cobros de tu suscripción, tomados de la pasarela.</div>
+    </div>
+
+    @if (loaded()) {
+      @if (payments().length) {
+        <div class="pay-history">
+          @for (p of payments(); track p.id) {
+            <div class="ph-row">
+              <div class="ph-main">
+                <span class="ph-plan">{{ planName(p.plan) }}</span>
+                <span class="ph-meta">{{ payDate(p.createdAt)
+                  }}@if (methodLabel(p.method)) { · {{ methodLabel(p.method) }}}</span>
+              </div>
+              <div class="ph-right">
+                <span class="ph-amount">{{ cop(p.amountInCents) }}</span>
+                <span class="ph-status" [class]="statusClass(p.status)">{{ statusLabel(p.status) }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="empty">
+          <div class="empty-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#6D4AFF" stroke-width="1.8"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 8v4l3 2" /><circle cx="12" cy="12" r="9" />
+            </svg>
+          </div>
+          <div class="empty-title">Aún no tienes pagos</div>
+          <div class="empty-sub">Cuando te suscribas a un plan, tus cobros aparecerán aquí.</div>
+          <a class="btn-primary" routerLink="/planes" style="margin-top:20px">Ver planes</a>
+        </div>
+      }
+    }
+  </div>
+</div>
