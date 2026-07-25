@@ -1,0 +1,79 @@
+<div class="recover-wrap">
+  <div class="recover-deco">
+    <div style="position:absolute;width:420px;height:420px;border-radius:50%;background:rgba(109,74,255,.08);top:-140px;left:-100px;animation:vx-drift 12s ease-in-out infinite"></div>
+    <div style="position:absolute;width:300px;height:300px;border-radius:50%;background:rgba(139,123,255,.1);bottom:-100px;right:-60px;animation:vx-drift 10s ease-in-out infinite reverse"></div>
+  </div>
+
+  <div class="recover-card">
+    <div class="recover-header">
+      <div style="position:absolute;inset:0;overflow:hidden">
+        <div style="position:absolute;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.1);top:-70px;right:-40px"></div>
+      </div>
+      <div class="header-icon">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="11" width="16" height="10" rx="2.5" />
+          <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+        </svg>
+      </div>
+    </div>
+
+    <div class="recover-body">
+      @if (validLink()) {
+        <form (ngSubmit)="submit()">
+          <div class="recover-title">Crea una nueva contraseña</div>
+          <div class="recover-sub">
+            Para <strong>{{ email }}</strong>. Elige una contraseña segura.
+          </div>
+
+          <div class="field-label" style="margin-top:22px">Nueva contraseña</div>
+          <div class="field-wrap">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8E8EA0" stroke-width="1.9"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="11" width="16" height="10" rx="2.5" />
+              <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+            </svg>
+            <input class="input" name="p1" [(ngModel)]="pass" type="password"
+              placeholder="Mínimo 8 caracteres" autocomplete="new-password" />
+          </div>
+
+          <div class="field-label" style="margin-top:14px">Repite la contraseña</div>
+          <div class="field-wrap">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8E8EA0" stroke-width="1.9"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="11" width="16" height="10" rx="2.5" />
+              <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+            </svg>
+            <input class="input" name="p2" [(ngModel)]="pass2" type="password"
+              placeholder="Repite la contraseña" autocomplete="new-password" />
+          </div>
+
+          <button type="submit" class="btn-submit">
+            @if (busy()) {
+              <span class="spin"></span>
+            } @else {
+              <span>Guardar contraseña</span>
+            }
+          </button>
+        </form>
+      } @else {
+        <div class="recover-title">Enlace no válido</div>
+        <div class="recover-sub">El enlace está incompleto o ya venció. Solicita uno nuevo.</div>
+        <button type="button" class="btn-submit" routerLink="/recuperar">
+          <span>Pedir otro enlace</span>
+        </button>
+      }
+
+      <div style="text-align:center;margin-top:20px">
+        <button type="button" class="back-link" routerLink="/login">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5" />
+            <path d="m12 19-7-7 7-7" />
+          </svg>
+          Volver a iniciar sesión
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
