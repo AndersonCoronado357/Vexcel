@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import crypto from 'node:crypto';
 import { config, googleConfigured } from '../config.js';
 import { User } from '../models/user.model.js';
-import { signToken } from '../middleware/auth.js';
+import { setSessionCookie, signToken } from '../middleware/auth.js';
 
 /**
  * Login con Google usando las credenciales que inyecta acmsy (useAcmsyAuth).
@@ -77,9 +77,10 @@ googleRouter.get('/auth/google/callback', async (req, res) => {
       });
     }
 
-    // Emite NUESTRO JWT y vuelve al frontend, que lo acepta y entra.
-    const token = signToken(user.id);
-    res.redirect(`${config.appUrl}/login?token=${encodeURIComponent(token)}`);
+    // Deja la sesión en una cookie httpOnly y entra directo a la app
+    // (el token nunca viaja en la URL ni queda accesible desde JS).
+    setSessionCookie(res, signToken(user.id));
+    res.redirect(`${config.appUrl}/`);
   } catch (err) {
     console.error('[auth/google/callback]', err);
     res.redirect(`${config.appUrl}/login?google=error`);

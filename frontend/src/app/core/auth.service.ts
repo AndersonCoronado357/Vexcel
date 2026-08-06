@@ -1,17 +1,20 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { ApiService, type AuthResponse } from './api.service';
+import { firstValueFrom } from 'rxjs';
+import { ApiService } from './api.service';
 import { PLAN_LABELS, type User } from './models';
 
-const TOKEN_KEY = 'vexcel_token';
-const USER_KEY = 'vexcel_user';
-
+/**
+ * La sesión vive en una cookie httpOnly del backend (inaccesible desde JS).
+ * En memoria solo guardamos el objeto de usuario para pintar la UI; al recargar
+ * se rehidrata con /auth/session (ver loadSession, llamado en el arranque).
+ */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly api = inject(ApiService);
   private readonly router = inject(Router);
 
-  readonly user = signal<User | null>(this.readStoredUser());
+  readonly user = signal<User | null>(null);
   readonly isLogged = computed(() => this.user() !== null);
   readonly initials = computed(() => {
     const n = this.user()?.name ?? 'U';
@@ -22,82 +25,39 @@ export class AuthService {
     return u ? PLAN_LABELS[u.plan] ?? 'Plan Free' : '';
   });
 
-  constructor() {
-    // Revalida la sesión guardada contra el backend al arrancar (diferido para
-    // no disparar HTTP dentro de la construcción del servicio).
-    if (this.token) {
-      queueMicrotask(() =>
-        this.api.me().subscribe({
-          next: ({ user }) => this.setUser(user),
-          error: (err) => {
-            // Solo cierra sesión si el token fue rechazado; un fallo de red no.
-            if (err?.status === 401) this.clear();
-          }
-        })
-      );
-    }
-  }
-
-  get token(): string {
-    return localStorage.getItem(TOKEN_KEY) ?? '';
-  }
-
-  private readStoredUser(): User | null {
+  /** Hidrata la sesión al arrancar leyendo la cookie (vía backend). */
+  async loadSession(): Promise<void> {
     try {
-      const raw = localStorage.getItem(USER_KEY);
-      return raw && localStorage.getItem(TOKEN_KEY) ? (JSON.parse(raw) as User) : null;
+      const { user } = await firstValueFrom(this.api.session());
+      this.user.set(user ?? null);
     } catch {
-      return null;
+      this.user.set(null);
     }
   }
 
-  /**
-   * Acepta la sesión. Devuelve true si ya redirigió (invitación pendiente):
-   * en ese caso el llamador NO debe navegar por su cuenta.
-   */
-  acceptSession(res: AuthResponse): boolean {
-    localStorage.setItem(TOKEN_KEY, res.token);
-    this.setUser(res.user);
-    const pending = localStorage.getItem('vexcel_pending_join');
-    if (pending) {
-      localStorage.removeItem('vexcel_pending_join');
-      this.router.navigateByUrl('/unirse?c=' + encodeURIComponent(pending));
-      return true;
-    }
-    return false;
+  /** Acepta la sesión tras login/registro/reset (la cookie ya la puso el backend). */
+  acceptSession(user: User): void {
+    this.setUser(user);
   }
 
   setUser(user: User): void {
-    localStorage.setItem(USER_KEY, JSON.stringify(user));
     this.user.set(user);
   }
 
-  /**
-   * Acepta una sesión a partir de un token (p. ej. el que devuelve el login con
-   * Google). Guarda el token, trae el usuario y entra a la app.
-   */
-  loginWithToken(token: string): void {
-    localStorage.setItem(TOKEN_KEY, token);
-    this.api.me().subscribe({
-      next: ({ user }) => {
-        this.setUser(user);
-        this.router.navigateByUrl('/');
-      },
-      error: () => {
-        this.clear();
-        this.router.navigateByUrl('/login');
-      }
+  logout(): void {
+    // Pide al backend borrar la cookie; pase lo que pase, limpiamos y salimos.
+    this.api.logout().subscribe({
+      next: () => this.finishLogout(),
+      error: () => this.finishLogout()
     });
   }
 
-  logout(): void {
-    this.clear();
+  private finishLogout(): void {
+    this.user.set(null);
     this.router.navigateByUrl('/login');
   }
 
   clear(): void {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
     this.user.set(null);
   }
 }

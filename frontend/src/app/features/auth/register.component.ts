@@ -1,5 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Component, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/api.service';
 import { AuthService } from '../../core/auth.service';
@@ -18,11 +18,16 @@ export class RegisterComponent {
   private readonly auth = inject(AuthService);
   private readonly toast = inject(ToastService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   name = '';
   email = '';
   pass = '';
   readonly busy = signal(false);
+  // Leemos del DOM al enviar (el autocompletado no siempre sincroniza ngModel).
+  readonly nameEl = viewChild<ElementRef<HTMLInputElement>>('nameEl');
+  readonly emailEl = viewChild<ElementRef<HTMLInputElement>>('emailEl');
+  readonly passEl = viewChild<ElementRef<HTMLInputElement>>('passEl');
 
   readonly benefits = [
     { title: 'Vectorización con potrace', desc: 'Calidad idéntica a un trazo profesional.' },
@@ -33,10 +38,19 @@ export class RegisterComponent {
 
   submit(): void {
     if (this.busy()) return;
+    const name = (this.nameEl()?.nativeElement.value ?? this.name).trim();
+    const email = (this.emailEl()?.nativeElement.value ?? this.email).trim();
+    const pass = this.passEl()?.nativeElement.value ?? this.pass;
+    if (!name || !email || !pass) {
+      this.toast.show('err', 'Completa el formulario', 'Nombre, correo y contraseña.');
+      return;
+    }
     this.busy.set(true);
-    this.api.register(this.name.trim(), this.email.trim(), this.pass).subscribe({
+    this.api.register(name, email, pass).subscribe({
       next: (res) => {
-        if (!this.auth.acceptSession(res)) this.router.navigateByUrl('/');
+        this.auth.acceptSession(res.user);
+        const join = this.route.snapshot.queryParamMap.get('join');
+        this.router.navigateByUrl(join ? '/unirse?c=' + encodeURIComponent(join) : '/');
       },
       error: (err) => {
         this.busy.set(false);

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, ElementRef, OnInit, inject, signal, viewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/api.service';
@@ -23,19 +23,15 @@ export class LoginComponent implements OnInit {
   email = '';
   pass = '';
   readonly busy = signal(false);
-  /** Volviendo de Google: mostramos una pantalla de carga limpia (sin alertas). */
-  readonly googleEntering = signal(false);
+  // Referencias al DOM: leemos el valor real al enviar (el autocompletado del
+  // navegador a veces no dispara el evento que sincroniza ngModel).
+  readonly emailEl = viewChild<ElementRef<HTMLInputElement>>('emailEl');
+  readonly passEl = viewChild<ElementRef<HTMLInputElement>>('passEl');
 
   ngOnInit(): void {
-    const q = this.route.snapshot.queryParamMap;
-    const token = q.get('token');
-    if (token) {
-      // Vuelta del login con Google: entramos directo, sin toast ni formulario.
-      this.googleEntering.set(true);
-      this.auth.loginWithToken(token);
-      return;
-    }
-    const g = q.get('google');
+    // El login con Google deja la sesión en una cookie y vuelve directo a "/",
+    // así que aquí solo manejamos los avisos de error.
+    const g = this.route.snapshot.queryParamMap.get('google');
     if (g === 'error') {
       this.toast.show('err', 'No se pudo entrar con Google', 'Intenta de nuevo o usa tu correo.');
     } else if (g === 'unavailable') {
@@ -43,12 +39,26 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  /** A dónde ir tras autenticar: al equipo si venías de una invitación. */
+  private afterAuthUrl(): string {
+    const join = this.route.snapshot.queryParamMap.get('join');
+    return join ? '/unirse?c=' + encodeURIComponent(join) : '/';
+  }
+
   submit(): void {
     if (this.busy()) return;
+    // Valor real del DOM (robusto ante autocompletado), con ngModel de respaldo.
+    const email = (this.emailEl()?.nativeElement.value ?? this.email).trim();
+    const pass = this.passEl()?.nativeElement.value ?? this.pass;
+    if (!email || !pass) {
+      this.toast.show('err', 'Faltan datos', 'Escribe tu correo y contraseña.');
+      return;
+    }
     this.busy.set(true);
-    this.api.login(this.email.trim(), this.pass).subscribe({
+    this.api.login(email, pass).subscribe({
       next: (res) => {
-        if (!this.auth.acceptSession(res)) this.router.navigateByUrl('/');
+        this.auth.acceptSession(res.user);
+        this.router.navigateByUrl(this.afterAuthUrl());
       },
       error: (err) => {
         this.busy.set(false);

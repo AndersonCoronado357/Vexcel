@@ -27,6 +27,9 @@ async function main(): Promise<void> {
   await connectDb([config.mongoUri]);
 
   const app = express();
+  // Detrás del proxy de acmsy (Caddy): necesario para que las cookies Secure
+  // y la detección de HTTPS funcionen correctamente.
+  app.set('trust proxy', 1);
   app.use(cors());
   app.use(express.json({ limit: '6mb' }));
   // payRouter va antes que teamRouter/historyRouter: esos tienen un authRequired

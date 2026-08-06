@@ -33,7 +33,7 @@
               <rect x="4" y="11" width="16" height="10" rx="2.5" />
               <path d="M8 11V7a4 4 0 0 1 8 0v4" />
             </svg>
-            <input class="input" name="p1" [(ngModel)]="pass" type="password"
+            <input #passEl class="input" name="p1" [(ngModel)]="pass" type="password"
               placeholder="Mínimo 8 caracteres" autocomplete="new-password" />
           </div>
 
@@ -44,7 +44,7 @@
               <rect x="4" y="11" width="16" height="10" rx="2.5" />
               <path d="M8 11V7a4 4 0 0 1 8 0v4" />
             </svg>
-            <input class="input" name="p2" [(ngModel)]="pass2" type="password"
+            <input #pass2El class="input" name="p2" [(ngModel)]="pass2" type="password"
               placeholder="Repite la contraseña" autocomplete="new-password" />
           </div>
 

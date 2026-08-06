@@ -20,7 +20,6 @@ import type {
 import { toTracerParams } from './models';
 
 export interface AuthResponse {
-  token: string;
   user: User;
 }
 
@@ -51,6 +50,16 @@ export class ApiService {
 
   me(): Observable<{ user: User }> {
     return this.http.get<{ user: User }>(`${this.base}/auth/me`);
+  }
+
+  /** Estado de sesión al arrancar (lee la cookie httpOnly); user o null. */
+  session(): Observable<{ user: User | null }> {
+    return this.http.get<{ user: User | null }>(`${this.base}/auth/session`);
+  }
+
+  /** Cierra sesión: el backend borra la cookie httpOnly. */
+  logout(): Observable<{ ok: boolean }> {
+    return this.http.post<{ ok: boolean }>(`${this.base}/auth/logout`, {});
   }
 
   setPlan(plan: Plan): Observable<{ user: User }> {
@@ -116,6 +125,11 @@ export class ApiService {
 
   setAvatar(image: string): Observable<{ user: User }> {
     return this.http.put<{ user: User }>(`${this.base}/me/avatar`, { image });
+  }
+
+  /** Guarda la preferencia de tema en el servidor (no en el navegador). */
+  saveTheme(theme: 'light' | 'dark'): Observable<{ ok: boolean }> {
+    return this.http.put<{ ok: boolean }>(`${this.base}/me/theme`, { theme });
   }
 
   /** Busca un usuario por correo (preview al invitar). */

@@ -3,7 +3,14 @@ import bcrypt from 'bcryptjs';
 import crypto from 'node:crypto';
 import { User } from '../models/user.model.js';
 import { effectivePlan } from '../services/plan.service.js';
-import { authRequired, signToken, type AuthedRequest } from '../middleware/auth.js';
+import {
+  authOptional,
+  authRequired,
+  clearSessionCookie,
+  setSessionCookie,
+  signToken,
+  type AuthedRequest
+} from '../middleware/auth.js';
 import { isDbConnected } from '../db.js';
 import { config, googleConfigured } from '../config.js';
 import { sendMail, resetPasswordEmail } from '../services/mail.service.js';
@@ -17,6 +24,12 @@ authRouter.get('/auth/providers', (_req, res) => {
   res.json({ google: googleConfigured() });
 });
 
+/** Cierra sesión: borra la cookie httpOnly. Público (no necesita BD). */
+authRouter.post('/auth/logout', (_req, res) => {
+  clearSessionCookie(res);
+  res.json({ ok: true });
+});
+
 function publicUser(u: {
   id?: unknown;
   _id?: unknown;
@@ -24,6 +37,7 @@ function publicUser(u: {
   email: string;
   plan: string;
   avatar?: string;
+  themePref?: 'light' | 'dark' | null;
   planUntil?: Date | null;
   autoRenew?: boolean;
 }) {
@@ -33,6 +47,7 @@ function publicUser(u: {
     email: u.email,
     plan: u.plan,
     avatar: u.avatar ?? '',
+    themePref: u.themePref ?? null,
     planUntil: u.planUntil ?? null,
     autoRenew: u.autoRenew ?? false
   };
@@ -68,7 +83,8 @@ authRouter.post('/auth/register', async (req, res) => {
     }
     const passwordHash = await bcrypt.hash(password, 10);
     const user = await User.create({ name: name.trim(), email, passwordHash });
-    res.json({ token: signToken(user.id), user: publicUser(user) });
+    setSessionCookie(res, signToken(user.id));
+    res.json({ user: publicUser(user) });
   } catch (err) {
     console.error('[auth/register]', err);
     res.status(500).json({ error: 'No se pudo crear la cuenta.' });
@@ -84,7 +100,8 @@ authRouter.post('/auth/login', async (req, res) => {
       res.status(401).json({ error: 'Correo o contraseña incorrectos.' });
       return;
     }
-    res.json({ token: signToken(user.id), user: publicUser(user) });
+    setSessionCookie(res, signToken(user.id));
+    res.json({ user: publicUser(user) });
   } catch (err) {
     console.error('[auth/login]', err);
     res.status(500).json({ error: 'No se pudo iniciar sesión.' });
@@ -145,7 +162,8 @@ authRouter.post('/auth/reset', async (req, res) => {
   user.resetTokenHash = null;
   user.resetTokenExp = null;
   await user.save();
-  res.json({ token: signToken(user.id), user: publicUser(user) });
+  setSessionCookie(res, signToken(user.id));
+  res.json({ user: publicUser(user) });
 });
 
 authRouter.get('/auth/me', authRequired, async (req: AuthedRequest, res) => {
@@ -155,6 +173,29 @@ authRouter.get('/auth/me', authRequired, async (req: AuthedRequest, res) => {
     return;
   }
   // Degradación perezosa: si el plan de pago venció, se persiste a Free.
+  const eff = effectivePlan(user);
+  if (eff !== user.plan) {
+    user.plan = eff;
+    user.planUntil = null;
+    await user.save();
+  }
+  res.json({ user: publicUser(user) });
+});
+
+/**
+ * Estado de sesión para hidratar el frontend al arrancar (lee la cookie
+ * httpOnly). Devuelve el usuario o null; nunca 401, para no ensuciar la consola.
+ */
+authRouter.get('/auth/session', authOptional, async (req: AuthedRequest, res) => {
+  if (!req.userId) {
+    res.json({ user: null });
+    return;
+  }
+  const user = await User.findById(req.userId);
+  if (!user) {
+    res.json({ user: null });
+    return;
+  }
   const eff = effectivePlan(user);
   if (eff !== user.plan) {
     user.plan = eff;

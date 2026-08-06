@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, ElementRef, OnInit, inject, signal, viewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/api.service';
@@ -22,6 +22,8 @@ export class ResetComponent implements OnInit {
   pass2 = '';
   readonly busy = signal(false);
   readonly validLink = signal(true);
+  readonly passEl = viewChild<ElementRef<HTMLInputElement>>('passEl');
+  readonly pass2El = viewChild<ElementRef<HTMLInputElement>>('pass2El');
 
   private token = '';
   email = '';
@@ -35,20 +37,22 @@ export class ResetComponent implements OnInit {
 
   submit(): void {
     if (this.busy()) return;
-    if (this.pass.length < 8) {
+    const pass = this.passEl()?.nativeElement.value ?? this.pass;
+    const pass2 = this.pass2El()?.nativeElement.value ?? this.pass2;
+    if (pass.length < 8) {
       this.toast.show('err', 'Contraseña muy corta', 'Debe tener mínimo 8 caracteres.');
       return;
     }
-    if (this.pass !== this.pass2) {
+    if (pass !== pass2) {
       this.toast.show('err', 'No coinciden', 'Repite la misma contraseña.');
       return;
     }
     this.busy.set(true);
-    this.api.resetPassword(this.email, this.token, this.pass).subscribe({
+    this.api.resetPassword(this.email, this.token, pass).subscribe({
       next: (res) => {
         // Navega primero; el toast se muestra al terminar (no interfiere con la
         // view-transition, que si no aborta la navegación).
-        if (this.auth.acceptSession(res)) return;
+        this.auth.acceptSession(res.user);
         this.router.navigateByUrl('/').then(() =>
           this.toast.show('ok', 'Contraseña actualizada', 'Tu sesión ya está iniciada.')
         );
