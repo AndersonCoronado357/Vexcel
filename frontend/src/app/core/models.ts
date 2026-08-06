@@ -9,6 +9,8 @@ export interface User {
   plan: Plan;
   /** Foto de perfil como data URI, o ''. */
   avatar: string;
+  /** Preferencia de tema guardada en el servidor (no en el navegador). */
+  themePref?: 'light' | 'dark' | null;
   /** Vencimiento del plan de pago (ISO) o null. */
   planUntil?: string | null;
   /** Se renueva automáticamente cada mes. */

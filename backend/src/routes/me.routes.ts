@@ -66,6 +66,17 @@ meRouter.put('/me/plan', authRequired, async (req: AuthedRequest, res) => {
   });
 });
 
+/** Guarda la preferencia de tema en el servidor (no en el navegador). */
+meRouter.put('/me/theme', authRequired, async (req: AuthedRequest, res) => {
+  const theme = req.body?.theme;
+  if (theme !== 'light' && theme !== 'dark') {
+    res.status(400).json({ error: 'Tema inválido.' });
+    return;
+  }
+  await User.findByIdAndUpdate(req.userId, { themePref: theme });
+  res.json({ ok: true });
+});
+
 /** Sube la foto de perfil (data URI); se recorta cuadrada a 256px. */
 meRouter.put('/me/avatar', authRequired, async (req: AuthedRequest, res) => {
   try {

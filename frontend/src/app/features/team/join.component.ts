@@ -68,9 +68,9 @@ export class JoinComponent implements OnInit {
       return;
     }
     if (!this.auth.isLogged()) {
-      // Guarda el cÃ³digo, entra o crea cuenta, y se retoma solo.
-      localStorage.setItem('vexcel_pending_join', code);
-      this.router.navigateByUrl('/login');
+      // El cÃ³digo viaja por la URL (sin almacenamiento del navegador): tras
+      // iniciar sesiÃ³n o registrarse, se retoma la invitaciÃ³n.
+      this.router.navigateByUrl('/login?join=' + encodeURIComponent(code));
       return;
     }
     this.api.joinTeam(code).subscribe({

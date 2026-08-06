@@ -11,6 +11,8 @@ export interface UserDoc {
   plan: Plan;
   /** Foto de perfil como data URI (PNG cuadrado pequeño), o ''. */
   avatar: string;
+  /** Preferencia de tema del usuario (se guarda en servidor, no en el navegador). */
+  themePref: 'light' | 'dark' | null;
   /** Vence el plan de pago (Wompi). Si pasó, se degrada a Free. null = sin vencimiento. */
   planUntil: Date | null;
   /** Se cobra automáticamente cada mes mientras esté activo. */
@@ -35,6 +37,7 @@ const userSchema = new Schema<UserDoc>(
     passwordHash: { type: String, required: true },
     plan: { type: String, enum: PLANS, default: 'free' },
     avatar: { type: String, default: '' },
+    themePref: { type: String, enum: ['light', 'dark', null], default: null },
     planUntil: { type: Date, default: null },
     autoRenew: { type: Boolean, default: false },
     wompiPaymentSourceId: { type: String, default: null },

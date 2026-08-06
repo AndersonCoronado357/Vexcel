@@ -9,8 +9,6 @@ import {
   type VectorizeResponse
 } from '../../core/models';
 
-const SETTINGS_KEY = 'vexcel_settings';
-
 /**
  * Estado del conversor compartido entre la pantalla y el header
  * ("Nueva imagen" vive en el shell, como en el diseño).
@@ -25,7 +23,7 @@ export class ConverterStateService {
   readonly srcFmt = signal<'PNG' | 'JPG'>('PNG');
   readonly originalUrl = signal('');
   readonly originalSize = signal<{ w: number; h: number }>({ w: 512, h: 512 });
-  readonly settings = signal<TraceSettings>(this.readSettings());
+  readonly settings = signal<TraceSettings>({ ...DEFAULT_SETTINGS });
   readonly result = signal<VectorizeResponse | null>(null);
   readonly svgUrl = signal('');
   readonly processing = signal(false);
@@ -38,23 +36,6 @@ export class ConverterStateService {
   private debounceId: ReturnType<typeof setTimeout> | null = null;
   /** La primera pasada de cada imagen cuenta para el límite del plan Free. */
   private mustCountUsage = false;
-
-  private readSettings(): TraceSettings {
-    try {
-      const raw = localStorage.getItem(SETTINGS_KEY);
-      return raw ? { ...DEFAULT_SETTINGS, ...JSON.parse(raw) } : { ...DEFAULT_SETTINGS };
-    } catch {
-      return { ...DEFAULT_SETTINGS };
-    }
-  }
-
-  private persistSettings(): void {
-    try {
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify(this.settings()));
-    } catch {
-      /* almacenamiento lleno o bloqueado: no es crítico */
-    }
-  }
 
   loadFile(file: File): void {
     this.revoke(this.originalUrl());
@@ -75,7 +56,6 @@ export class ConverterStateService {
 
   patchSettings(partial: Partial<TraceSettings>): void {
     this.settings.update((s) => ({ ...s, ...partial }));
-    this.persistSettings();
     if (!this.file()) return;
     // Cambiar de modo debe ser instantáneo: normalmente ya está en caché
     // (lo precalculamos en paralelo), así que convertimos de inmediato.
